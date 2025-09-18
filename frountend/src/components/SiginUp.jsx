@@ -138,7 +138,7 @@ useEffect(() => {
             )}
           </div>
 
-          {/* Password */}
+        
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
               Password
@@ -158,7 +158,7 @@ useEffect(() => {
             )}
           </div>
 
-          {/* Button */}
+       
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200"
@@ -167,7 +167,7 @@ useEffect(() => {
           </button>
         </form>
 
-        {/* Navigate to Login */}
+    
         <p className="mt-6 text-center text-sm text-gray-600">
           Already have an account?{" "}
           <Link

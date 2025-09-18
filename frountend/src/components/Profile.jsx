@@ -110,7 +110,7 @@ const handleSave = () => {
         </div>
 
         <div className="space-y-4">
-          {/* Email */}
+       
           <div>
             <label className="block text-sm font-medium text-gray-500">
               Email
@@ -130,7 +130,7 @@ const handleSave = () => {
             )}
           </div>
 
-          {/* Phone */}
+         
           <div>
             <label className="block text-sm font-medium text-gray-500">
               Phone Number
@@ -151,7 +151,7 @@ const handleSave = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
+      
         <div className="mt-6 flex justify-center gap-4">
           {!isEditing ? (
             <button

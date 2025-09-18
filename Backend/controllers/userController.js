@@ -148,13 +148,12 @@ export const editProfile = async (req, res) => {
 };
 
 export const refreshToken = (req, res) => {
-  const refreshToken = req.cookies?.refreshToken; // make sure you're actually reading cookie
+  const refreshToken = req.cookies?.refreshToken; 
   console.log("referish token is ", refreshToken);
   if (!refreshToken) {
     return res.status(401).json({ message: "Refresh token missing" });
   }
 
-  // Verify refresh token
   jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
     if (err) return res.status(401).json({ message: "Invalid refresh token" });
 

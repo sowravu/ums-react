@@ -1,15 +1,15 @@
-// src/api/axios.js
+
 import axios from "axios";
 import store from "../../store/store";
 import { logout, setToken } from "../../store/slices/authSlice";
 
 
 const api = axios.create({
-  baseURL: "http://localhost:5000", // your backend URL
-  withCredentials: true, // allow cookies if you store refresh token in httpOnly cookie
+  baseURL: "http://localhost:5000",
+  withCredentials: true, 
 });
 
-// Request Interceptor -> add token before every request
+
 api.interceptors.request.use(
   (config) => {
     const token =store.getState().auth.token;
@@ -21,7 +21,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor -> handle expired token
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -29,7 +29,7 @@ api.interceptors.response.use(
 
     const originalRequest = error.config;
 
-    // If token expired and not already retried
+  
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -47,7 +47,7 @@ api.interceptors.response.use(
         api.defaults.headers.common["Authorization"] = `Bearer ${data.accessToken}`;
         originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
 
-        return api(originalRequest); // retry request
+        return api(originalRequest); 
       } catch (err) {
         console.log("refresh token is missing")
         store.dispatch(logout());

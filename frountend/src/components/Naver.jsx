@@ -17,26 +17,26 @@ const navigate=useNavigate()
 
   return (
     <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center">
-      {/* Left - App Logo / Title */}
+    
       <div className="text-xl font-bold text-blue-600">UMS</div>
 
-      {/* Right - User Info + Buttons */}
+    
       <div className="flex items-center space-x-4">
-        {/* Username */}
+      
         {user && (
           <span className="text-gray-700 font-medium">
             {user.name}
           </span>
         )}
 
-        {/* Profile Button */}
+
         <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
         onClick={()=>navigate('/profile')}
         >
           Profile
         </button>
 
-        {/* Logout Button */}
+        
         <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition" 
          onClick={HandleLogout}
         >
