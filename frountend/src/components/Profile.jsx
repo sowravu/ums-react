@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { editProfile } from "../../store/slices/authSlice";
+import { profileApi } from "../api/authApi";
 import axios from "axios";
 
 const Profile = () => {
@@ -17,48 +19,57 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  // ✅ Fetch profile on load with token
+  const dispatch=useDispatch()
+
+ 
   useEffect(() => {
     if (!token) {
       navigate("/login");
       return;
     }
 
-    axios
-      .get("http://localhost:5000/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+  profileApi()
       .then((res) => {
         setFormData(res.data);
       })
       .catch((err) => {
         console.error("Auth error:", err);
-        navigate("/login"); // redirect if token invalid
+        
       });
   }, [token, navigate]);
+
+  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setFormData({ ...formData, image: imageURL });
-    }
-  };
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setFormData({ ...formData, image: file }); // keep file
+  }
+};
 
-  const handleSave = () => {
+const handleSave = () => {
+  const form = new FormData();
+  form.append("name", formData.name);
+  form.append("email", formData.email);
+  form.append("phone", formData.phone);
 
+  if (formData.image instanceof File) {
+    form.append("image", formData.image); 
+  }
 
-    console.log("Updated Profile Data:", formData);
-
-    
-    setIsEditing(false);
-  };
+  dispatch(editProfile(form))
+    .unwrap()
+    .then(() => {
+      setIsEditing(false);
+    })
+    .catch((err) => {
+      alert(err);
+    });
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

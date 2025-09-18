@@ -32,6 +32,27 @@ export const login = createAsyncThunk(
   }
 );
 
+export const editProfile = createAsyncThunk(
+  "auth/editProfile",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/editProfile",
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Profile update failed");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -50,7 +71,10 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
     },
     setToken: (state, action) => {
-      state.token = action.payload;
+      console.log("state.token",action.payload)
+      state.token = action.payload.token;
+      localStorage.setItem("token", action.payload.token);
+
     },
   },
   extraReducers: (builder) => {
@@ -84,6 +108,13 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(editProfile.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+      })
+      .addCase(editProfile.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

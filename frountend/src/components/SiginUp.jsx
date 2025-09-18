@@ -60,8 +60,6 @@ useEffect(() => {
     return Object.keys(newErrors).length === 0;
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -73,6 +71,8 @@ useEffect(() => {
         .catch((err) => alert(err.message || "siginup faild"));
     }
   };
+
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

@@ -1,23 +1,41 @@
 import { Link } from "react-router-dom";
 
-import { Navigate,useNavigate } from "react-router-dom";
-import { useSelector,useDispatch } from "react-redux";
-import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useState,useEffect } from "react";
 import { login } from "../../store/slices/authSlice";
 const Login = () => {
-  const token = useSelector((state) => state.auth.token);
-const dispatch=useDispatch()
-const navigate=useNavigate()
-
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [Errors,setErrors]=useState({});
+  const [Errors, setErrors] = useState({});
+
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+useEffect(()=>{
+
+if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+
+      if (decoded.exp < currentTime) {
+       console.log("hello all")
+        return undefined; 
+      }
 
 
-    if (token) {
-    return <Navigate to="/home" replace />;
+      <Navigate to="/home" replace />;
+    } catch (err) {
+      console.error("Invalid token:", err);
+      return null;
+    }
   }
+
+  },[token,navigate])
+
 
 
   const validateForm = () => {
@@ -31,27 +49,22 @@ const navigate=useNavigate()
     if (!password.trim()) {
       newErrors.password = "password is required";
     }
-   setErrors(newErrors)
+    setErrors(newErrors);
 
-   return Object.keys(newErrors).length===0
-
+    return Object.keys(newErrors).length === 0;
   };
-
 
   const handleLogin = (e) => {
     e.preventDefault();
-        
-    if(validateForm()){
-         dispatch(login({email,password})).unwrap()
+
+    if (validateForm()) {
+      dispatch(login({ email, password }))
+        .unwrap()
         .then(() => {
           navigate("/home", { replace: true });
         })
         .catch((err) => alert(err.message || "login faild"));
-       
-
     }
-
-
   };
 
   return (
@@ -71,13 +84,13 @@ const navigate=useNavigate()
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               onChange={(e) => {
                 setEmail(e.target.value);
-                
-               setErrors((prev)=>({...prev,email:""}))
+
+                setErrors((prev) => ({ ...prev, email: "" }));
               }}
             />
             {Errors.email && (
               <p className="text-red-500 text-sm mt-1">{Errors.email}</p>
-            )} 
+            )}
           </div>
 
           <div>
@@ -88,14 +101,15 @@ const navigate=useNavigate()
               type="password"
               placeholder="Enter your password"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              onChange={(e) => {setPassword(e.target.value);
-                setErrors((prev)=>({...prev,password:""}))
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setErrors((prev) => ({ ...prev, password: "" }));
               }}
             />
 
-               {Errors.password && (
+            {Errors.password && (
               <p className="text-red-500 text-sm mt-1">{Errors.password}</p>
-            )} 
+            )}
           </div>
 
           <button

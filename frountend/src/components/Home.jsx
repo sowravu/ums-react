@@ -1,10 +1,29 @@
 import { useSelector } from "react-redux";
 import Navbar from "./Naver";
-
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getHomeData } from "../api/authApi";
 const Home = () => {
   const user = useSelector((state) => state.auth.user);
 
- 
+  const token = useSelector((state) => state.auth.token);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+  getHomeData()
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.error("Auth error:", err);
+        navigate("/login");
+      });
+  }, [token, navigate]);
 
   return (
     <>
