@@ -25,7 +25,7 @@ router.get("/home", verifyToken, async (req, res) => {
   if (user.isBlocked === 1) {
     return res.status(403).json({ message: "User is blocked" });
   }
-  
+
   res.json({
     isValid: true,
     user: {
@@ -39,6 +39,8 @@ router.get("/home", verifyToken, async (req, res) => {
     },
   });
 });
+
+//hai all
 
 router.post("/editProfile", upload.single("image"), editProfile);
 
