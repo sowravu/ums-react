@@ -1,10 +1,11 @@
-import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+import User from "../models/User.js";
+
 const generateAccessToken = (user) => {
   return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
-    expiresIn: "10s",
+    expiresIn: "15m",
   });
 };
 
@@ -56,6 +57,7 @@ export const createUser = async (req, res) => {
       phone: newUser.phone,
       isAdmin: newUser.isAdmin,
       image: newUser.image,
+      isBlocked: 0,
     },
   });
 };
@@ -73,6 +75,10 @@ export const loginUser = async (req, res) => {
 
   if (!match) {
     return res.status(404).json({ message: "Invalid credentials" });
+  }
+
+  if (user.isBlocked == 1) {
+    return res.status(404).json({ message: "admin is blocked you" });
   }
 
   const accessToken = generateAccessToken(user);
@@ -96,6 +102,7 @@ export const loginUser = async (req, res) => {
       phone: user.phone,
       isAdmin: user.isAdmin,
       image: user.image,
+      isBlocked: user.isBlocked,
     },
   });
 };
@@ -103,15 +110,20 @@ export const loginUser = async (req, res) => {
 export const getCurrentUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-    console.log("existing user is",user)
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+      if(user.isBlocked==1){
+        return res.status(404).json({message:"user is blocked you"})
+      }
+
     res.json({
       name: user.name,
       email: user.email,
       phone: user.phone,
       image: user.image,
+      userid: user._id,
     });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
@@ -120,9 +132,10 @@ export const getCurrentUserProfile = async (req, res) => {
 
 export const editProfile = async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
-    const userId = req.user.id;
-
+    const { name, email, phone, userid } = req.body;
+    console.log("req body of edit profile is ", req.body);
+    const userId = userid;
+    console.log("userid sii is si ", userId);
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -139,7 +152,12 @@ export const editProfile = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      user: updatedUser,
+      user: {
+        ...updatedUser._doc,
+        image: updatedUser.image
+          ? `http://localhost:5000${updatedUser.image}`
+          : null,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -148,7 +166,7 @@ export const editProfile = async (req, res) => {
 };
 
 export const refreshToken = (req, res) => {
-  const refreshToken = req.cookies?.refreshToken; 
+  const refreshToken = req.cookies?.refreshToken;
   console.log("referish token is ", refreshToken);
   if (!refreshToken) {
     return res.status(401).json({ message: "Refresh token missing" });
@@ -161,4 +179,58 @@ export const refreshToken = (req, res) => {
 
     res.json({ accessToken: newAccessToken });
   });
+};
+
+export const getusersDatas = async (req, res) => {
+  try {
+    const users = await User.find({ isAdmin: 0 }).select("-password");
+
+    res.status(200).json({
+      success: true,
+      message: "Users fetched successfully",
+      users,
+    });
+  } catch (error) {
+    console.error("getUsersDatas error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const editUserByAdmin = async (req, res) => {
+  try {
+    const { name, email, phone } = req.body;
+    const userId = req.params.id;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, email, phone, ...(image && { image }) },
+      { new: true }
+    ).select("-password");
+
+    res.json({ success: true, message: "User updated", user: updatedUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const toggleBlockUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user)
+      return res.status(404).json({ success: false, message: "Not found" });
+
+    user.isBlocked = user.isBlocked ? 0 : 1;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: `User ${user.isBlocked ? "blocked" : "unblocked"}`,
+      user,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 };

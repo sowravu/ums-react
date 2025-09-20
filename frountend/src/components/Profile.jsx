@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector,useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 import { editProfile } from "../../store/slices/authSlice";
 import { profileApi } from "../api/authApi";
-import axios from "axios";
+
 
 const Profile = () => {
   const token = useSelector((state) => state.auth.token);
@@ -15,6 +15,7 @@ const Profile = () => {
     email: "",
     phone: "",
     image: "",
+    userid:""
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -34,6 +35,7 @@ const Profile = () => {
       })
       .catch((err) => {
         console.error("Auth error:", err);
+        navigate('/login' , {replace:true})
         
       });
   }, [token, navigate]);
@@ -56,6 +58,8 @@ const handleSave = () => {
   form.append("name", formData.name);
   form.append("email", formData.email);
   form.append("phone", formData.phone);
+  form.append("userid", formData.userid);
+
 
   if (formData.image instanceof File) {
     form.append("image", formData.image); 
@@ -64,7 +68,9 @@ const handleSave = () => {
   dispatch(editProfile(form))
     .unwrap()
     .then(() => {
-      setIsEditing(false);
+      alert("profile updated sucessfull")
+      navigate("/home")
+     
     })
     .catch((err) => {
       alert(err);
@@ -80,7 +86,7 @@ const handleSave = () => {
 
         <div className="flex flex-col items-center mb-6">
           <img
-            src={formData.image || "/default-avatar.png"}
+            src={`http://localhost:5000${formData.image}` || "/default-avatar.png"}
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
           />

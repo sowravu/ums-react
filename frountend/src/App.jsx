@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/Profile";
+import Dashboard from "./components/Dashboard";
 
 const App = () => {
   return (
@@ -15,6 +16,8 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+
           <Route
             path="/home"
             element={
@@ -23,7 +26,7 @@ const App = () => {
               </PrivateRoute>
             }
           />
-          <Route path="/profile" element={<Profile/>} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
     </>

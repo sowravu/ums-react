@@ -18,6 +18,17 @@ export const siginup = createAsyncThunk(
   }
 );
 
+// export const updateUserByAdmin=createAsyncThunk(
+//   'auth/siginup',
+//   async(formData,{rejectWithValue})=>{
+//     try {
+//       const res=await axios.post
+//     } catch (error) {
+      
+//     }
+//   }
+// )
+
 export const login = createAsyncThunk(
   "auth/login",
   async (formData, { rejectWithValue }) => {
@@ -43,9 +54,11 @@ export const editProfile = createAsyncThunk(
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
+            
           },
         }
       );
+      console.log("edit profile data is ",res.data)
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Profile update failed");
@@ -76,6 +89,7 @@ const authSlice = createSlice({
       localStorage.setItem("token", action.payload.token);
 
     },
+    setuser
   },
   extraReducers: (builder) => {
     builder

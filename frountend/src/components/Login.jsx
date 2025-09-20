@@ -10,7 +10,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [Errors, setErrors] = useState({});
 
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state) => state.auth.token)  || localStorage.getItem("token");
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -20,14 +21,13 @@ if (token) {
     try {
       const decoded = jwtDecode(token);
       const currentTime = Date.now() / 1000;
+     
 
       if (decoded.exp < currentTime) {
-       console.log("hello all")
         return undefined; 
       }
-
-
-      <Navigate to="/home" replace />;
+      
+    navigate("/home", { replace: true });
     } catch (err) {
       console.error("Invalid token:", err);
       return null;
