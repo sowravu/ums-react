@@ -24,7 +24,7 @@ export const siginup = createAsyncThunk(
 //     try {
 //       const res=await axios.post
 //     } catch (error) {
-      
+
 //     }
 //   }
 // )
@@ -54,11 +54,10 @@ export const editProfile = createAsyncThunk(
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
-            
           },
         }
       );
-      console.log("edit profile data is ",res.data)
+      console.log("edit profile data is ", res.data);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Profile update failed");
@@ -84,12 +83,14 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
     },
     setToken: (state, action) => {
-      console.log("state.token",action.payload)
+      console.log("state.token", action.payload);
       state.token = action.payload.token;
       localStorage.setItem("token", action.payload.token);
-
     },
-    setuser
+    setUser: (state, action) => {
+      state.user = action.payload.user;
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -134,6 +135,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setToken } = authSlice.actions;
+export const { logout, setToken,setUser } = authSlice.actions;
 
 export default authSlice.reducer;

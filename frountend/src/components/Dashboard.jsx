@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getdashboarddata, editUser, toggleBlock } from "../api/authApi";
 
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
+import { logout } from "../../store/slices/authSlice";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.auth.user);
+  const dispatch=useDispatch()
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
@@ -50,6 +52,9 @@ const Dashboard = () => {
     fetchUsers();
   };
 
+
+
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="flex justify-between items-center mb-6">
@@ -57,7 +62,8 @@ const Dashboard = () => {
         <button className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition">
           + Add User
         </button>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition">
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+        onClick={()=>{dispatch(logout());navigate('/login',{replace:true})}}>
           Logout
         </button>
       </div>
