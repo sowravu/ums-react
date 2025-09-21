@@ -86,7 +86,7 @@ const handleSave = () => {
 
         <div className="flex flex-col items-center mb-6">
           <img
-            src={`http://localhost:5000${formData.image}` || "/default-avatar.png"}
+            src={`https://ums-react-backend-j5vg.onrender.com${formData.image}` || "/default-avatar.png"}
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
           />
