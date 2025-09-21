@@ -84,7 +84,7 @@ const Dashboard = () => {
               <tr key={u._id} className="border-b hover:bg-gray-50 transition">
                 <td className="p-4">
                   <img
-                    src={`http://localhost:5000${u.image}`}
+                    src={`https://ums-react-backend-j5vg.onrender.com${u.image}`}
                     alt={u.name}
                     className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
                   />
