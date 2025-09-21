@@ -6,7 +6,7 @@ export const siginup = createAsyncThunk(
   "auth/signup",
   async (formData, { rejectWithValue }) => {
     try {
-      const res = await axios.post("http://localhost:5000/signup", formData, {
+      const res = await axios.post("https://ums-react-backend-j5vg.onrender.com/signup", formData, {
         withCredentials: true,
       });
       console.log("form data is", formData);
@@ -33,7 +33,7 @@ export const login = createAsyncThunk(
   "auth/login",
   async (formData, { rejectWithValue }) => {
     try {
-      const res = await axios.post("http://localhost:5000/login", formData, {
+      const res = await axios.post("https://ums-react-backend-j5vg.onrender.com/login", formData, {
         withCredentials: true,
       });
       return res.data;
@@ -48,7 +48,7 @@ export const editProfile = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/editProfile",
+        "https://ums-react-backend-j5vg.onrender.com/editProfile",
         formData,
         {
           withCredentials: true,
